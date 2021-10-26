@@ -7,37 +7,57 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import ValidaCampos from "../ValidaCompos/ValidaCampos";
 import { Autocomplete } from "@mui/material";
+import api from "../../services/Api.js";
+import server from "../../Config/BaseURL";
 function FormCalcFrete() {
   const [localEntrega, setLocalEntrega] = useState("");
-  const [uf, setUF] = useState("");
+  const [uf, setUF] = useState([]);
+  const [ufsData, setUfsData] = useState([]);
+  const [cityData, setCityData] = useState([]);
+  const [city, setCity] = useState([]);
   const [peso, setPeso] = useState("");
   const [valor, setValor] = useState(0.0);
   const [enviado, setEnviado] = useState(false);
 
-  const ufs = [
-    { id: 1, nomUF: "SP" },
-    { id: 2, nomUF: "MG" },
-    { id: 3, nomUF: "BH" },
-    { id: 4, nomUF: "RJ" },
-  ];
+  const getUF = async () => {
+    try {
+      const { data } = await api.get(`${server.url}uf`);
+      if (data) setUfsData(data);
+    } catch (err) {
+      swal("Erro", "Erro ao carregar os usuários cadastrados", "error");
+    }
+  };
+  useEffect(() => {
+    getUF();
+  }, []);
+
+  const getCityByName = async (name) => {
+    try {
+      const { data } = await api.get(`${server.url}cidade/name/${name}`);
+      if (data) setCityData(data);
+    } catch (err) {
+      swal("Erro", "Erro ao carregar os usuários cadastrados", "error");
+    }
+  };
 
   const ufsParamns = {
-    options: ufs,
-    getOptionLabel: (option) => option.nomUF,
+    options: ufsData,
+    getOptionLabel: (option) => option.SIGLA_UF,
   };
 
-  const handleChange = (event) => {
-    setUF(event.target.value);
+  const cityParams = {
+    options: cityData,
+    getOptionLabel: (option) => `${option.ID} -  ${option.NOME_CIDADE}`,
   };
+
 
   const handleSubmit = () => {
     console.log("ola mundo");
-    const data = {};
   };
 
   return (
     <Container className="mt-5">
-      <Row className="justify-content">
+      <Row className="justify-content-center">
         <Col md={8}>
           <Card>
             <Card.Header>Calcular Frete</Card.Header>
@@ -48,8 +68,12 @@ function FormCalcFrete() {
                     <Autocomplete
                       {...ufsParamns}
                       id="ufs"
-                      disableCloseOnSelect
+                      clearOnBlur={true}
+                      clearText="Limpar"
                       noOptionsText="Nenhum Registro"
+                      onChange={(event, newValue) => {
+                        setUF(newValue);
+                      }}
                       renderInput={(params) => (
                         <TextField {...params} label="UF" variant="standard" />
                       )}
@@ -57,12 +81,19 @@ function FormCalcFrete() {
                   </Col>
                   <Col md={9} xs={9}>
                     <Autocomplete
-                      {...ufsParamns}
+                      {...cityParams}
                       id="city"
-                      disableCloseOnSelect
+                      clearOnBlur={true}
+                      clearText="Limpar"
                       noOptionsText="Nenhum Registro"
+                      onChange={(event, newValue) => {
+                        setCity(newValue);
+                      }}
                       renderInput={(params) => (
-                        <TextField {...params} label="Cidade" variant="standard" />
+                        <TextField {...params} label="Cidade" variant="standard"  
+                        onChange={({target}) => {
+                          getCityByName(target.value);
+                      }} />
                       )}
                     />
                   </Col>
