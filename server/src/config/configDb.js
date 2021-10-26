@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 
 async function connect(){
+    //console.log(process.env.MYSQL_HOST);
     const datainfo = {
         host : 'localhost',
         user :'root',

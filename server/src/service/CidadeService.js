@@ -24,6 +24,15 @@ async function findByName(name){
     return rows;
 }
 
+async function findAll(){
+    const conn = await database.connect();
+    const sql = `select * from cidade c join uf u on c.FK_ID_UF = u.ID_UF where c.ind_canc = 0`
+    const [rows] = await conn.query(sql);
+    console.log('ola mundo');
+    conn.end();
+    return rows;
+}
+
 async function updateCity(nomeCity,tipoCity,idUF,idCity){
     const conn = await database.connect();
     const sql = "update cidade c set NOME_CIDADE = ?, TIPO_CIDADE = ?, FK_ID_UF = ? where c.ID = ? ";
@@ -39,4 +48,4 @@ async function deleteCity(idCity){
     conn.end();
 }
 
-export default {findByID,findByName,insetCity,updateCity,deleteCity};
+export default {findByID,findByName,insetCity,updateCity,deleteCity,findAll};

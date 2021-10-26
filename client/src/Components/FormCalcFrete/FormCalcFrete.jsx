@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Col, Container, Form, Row, Card } from "react-bootstrap";
 import swal from "sweetalert";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import ValidaCampos from "../ValidaCompos/ValidaCampos";
 import { Autocomplete } from "@mui/material";
@@ -13,7 +11,9 @@ function FormCalcFrete() {
   const [localEntrega, setLocalEntrega] = useState("");
   const [uf, setUF] = useState([]);
   const [ufsData, setUfsData] = useState([]);
-  const [cityData, setCityData] = useState([]);
+  const [cityData, setCityData] = useState([
+    { ID: 0, NOME_CIDADE: "Digite para pesquisar" },
+  ]);
   const [city, setCity] = useState([]);
   const [peso, setPeso] = useState("");
   const [valor, setValor] = useState(0.0);
@@ -49,7 +49,6 @@ function FormCalcFrete() {
     options: cityData,
     getOptionLabel: (option) => `${option.ID} -  ${option.NOME_CIDADE}`,
   };
-
 
   const handleSubmit = () => {
     console.log("ola mundo");
@@ -90,10 +89,14 @@ function FormCalcFrete() {
                         setCity(newValue);
                       }}
                       renderInput={(params) => (
-                        <TextField {...params} label="Cidade" variant="standard"  
-                        onChange={({target}) => {
-                          getCityByName(target.value);
-                      }} />
+                        <TextField
+                          {...params}
+                          label="Cidade"
+                          variant="standard"
+                          onChange={({ target }) => {
+                            getCityByName(target.value);
+                          }}
+                        />
                       )}
                     />
                   </Col>
@@ -101,7 +104,7 @@ function FormCalcFrete() {
                 <Row className="mt-5">
                   <Col md={6} xs={6}>
                     <TextField
-                      id="siga"
+                      id="peso"
                       className="col-md-12"
                       label="Peso"
                       autoComplete="current-siga"
@@ -116,7 +119,7 @@ function FormCalcFrete() {
                   </Col>
                   <Col md={6} xs={6}>
                     <TextField
-                      id="siga"
+                      id="valor"
                       className="col-md-12"
                       label="Valor (R$)"
                       autoComplete="current-siga"

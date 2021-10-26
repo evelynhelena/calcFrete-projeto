@@ -41,6 +41,15 @@ router.get('/name/:name', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    try{
+        const dataCidade = await db.findAll();
+        res.status(200).send(dataCidade);
+    }catch(err){
+        res.status(500).send({message: "Erro", err: err});
+    }
+});
+
 
 router.put('/:id',[
     body('nomeCity').isString().withMessage("Nome da cidade inválido"),
